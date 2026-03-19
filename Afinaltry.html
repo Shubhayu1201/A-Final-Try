@@ -386,9 +386,25 @@
             s1HeartsContainer.appendChild(heart);
         }
 
-        musicBtn.addEventListener('click', () => {
+        musicBtn.addEventListener('click', async () => {
             if(!s1Started) {
                 s1Started = true;
+                
+                // Show a loading indicator while fetching the audio to avoid buffering
+                const originalText = musicBtn.textContent;
+                musicBtn.textContent = '⏳';
+                musicBtn.style.pointerEvents = 'none';
+
+                try {
+                    // Fetch entire audio as blob to ensure smooth playback
+                    const res = await fetch(s1Music.getAttribute('src'));
+                    const blob = await res.blob();
+                    s1Music.src = URL.createObjectURL(blob);
+                } catch(e) {
+                    console.log("Preloading failed, falling back to standard streaming", e);
+                }
+
+                musicBtn.style.pointerEvents = 'auto';
                 musicBtn.classList.add('moved');
                 musicBtn.textContent = '⏸';
                 s1Music.volume = 0.4;
@@ -447,9 +463,10 @@
             "But ekta jinis jaano!!..."
         ];
 
+        // Ensure objectUrl is prepared to hold the downloaded blob URLs
         const surprisePlaylist = [
             {
-                audioSrc: "song1.mp3",
+                audioSrc: "song1.mp3", objectUrl: null,
                 lyrics: [
                     { time: 0.0, text: "Ek ladki ko dekha to aisa laga" },
                     { time: 8.2, text: "Jaise khilta gulaab, jaise shayar ka khwaab" },
@@ -460,7 +477,7 @@
                 ]
             },
             {
-                audioSrc: "song2.mp3",
+                audioSrc: "song2.mp3", objectUrl: null,
                 lyrics: [
                     { time: 0.5, text: "And there was something about you" },
                     { time: 3.2, text: "that now I can't remember" },
@@ -474,7 +491,7 @@
                 ]
             },
             {
-                audioSrc: "song3.mp3",
+                audioSrc: "song3.mp3", objectUrl: null,
                 lyrics: [
                     { time: 1.0, text: "Unse Nazar Kya Milin" },
                     { time: 5.5, text: "Roshan Fizaein Ho Gayee" },
@@ -483,7 +500,7 @@
                 ]
             },
             {
-                audioSrc: "song4.mp3",
+                audioSrc: "song4.mp3", objectUrl: null,
                 lyrics: [
                     { time: 0.0, text: "Ho..Sheesh-Mehal Na Mujhko Suhaaye" },
                     { time: 6.29, text: "Tujh Sang Sookhi Roti Bhaaye" },
@@ -496,7 +513,7 @@
                 ]
             },
             {
-                audioSrc: "song5.mp3",
+                audioSrc: "song5.mp3", objectUrl: null,
                 lyrics: [
                     { time: 0.1, text: "O cheyechi jotobari," },
                     { time: 5.3, text: "Hoyeche charachari" },
@@ -507,7 +524,7 @@
                 ]
             },
             {
-                audioSrc: "song6.mp3",
+                audioSrc: "song6.mp3", objectUrl: null,
                 lyrics: [
                     { time: 0.95, text: "Tum ho toh sab achha hai" },
                     { time: 4.7, text: "Tum ho to waqt thama hai" },
@@ -521,6 +538,18 @@
         let currentLyricIndex = 0;
         let isPlaying = false;
         let isTransitioningText = false;
+
+        // One-time Setup for Audio Event Listeners to prevent multiple triggers
+        s2Audio.addEventListener('timeupdate', () => {
+            if (isPlaying) updateLyrics(s2Audio.currentTime);
+        });
+
+        s2Audio.addEventListener('ended', () => {
+            if (isPlaying) {
+                isPlaying = false;
+                showNextButton();
+            }
+        });
 
         function getRandomArbitrary(min, max) { return Math.random() * (max - min) + min; }
 
@@ -579,22 +608,61 @@
         }
 
         function startLyricSync() {
-            s2Audio.addEventListener('timeupdate', () => {
-                if (isPlaying) updateLyrics(s2Audio.currentTime);
-            });
-            s2Audio.addEventListener('ended', showNextButton);
             fadeInLyric(surprisePlaylist[currentSongIndex].lyrics[0].text);
+        }
+
+        // Silent background preload function for the next song
+        function preloadNextSong() {
+            const nextIndex = currentSongIndex + 1;
+            if (nextIndex < surprisePlaylist.length) {
+                const nextSong = surprisePlaylist[nextIndex];
+                if (!nextSong.objectUrl) {
+                    fetch(nextSong.audioSrc)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            nextSong.objectUrl = URL.createObjectURL(blob);
+                        })
+                        .catch(err => console.error("Prefetch failed", err));
+                }
+            }
         }
 
         async function playMusicAndStartLyrics() {
             const song = surprisePlaylist[currentSongIndex];
-            s2Audio.src = song.audioSrc;
+            
+            // Show Loading State before starting
+            lyricElement.classList.remove('text-4xl', 'font-extrabold', 'text-chapter-word');
+            lyricElement.classList.add('text-white', 'text-xl', 'sm:text-3xl', 'italic');
+            lyricElement.textContent = "Downloading song... ⏳";
+            lyricElement.style.opacity = "1";
+            lyricElement.classList.add('animate-pulse');
+
             try {
+                // Fetch Audio File fully into Blob to ensure no buffering pauses
+                if (!song.objectUrl) {
+                    const response = await fetch(song.audioSrc);
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    const blob = await response.blob();
+                    song.objectUrl = URL.createObjectURL(blob);
+                }
+
+                s2Audio.src = song.objectUrl;
+                
+                // Clear the loading animation
+                lyricElement.classList.remove('animate-pulse');
+
                 await s2Audio.play();
                 isPlaying = true;
                 startLyricSync();
+
+                // Silently preload the next song so it's instantly ready
+                preloadNextSong();
+
             } catch (e) {
-                console.warn("Playback failed:", e);
+                console.warn("Playback or fetch failed:", e);
+                lyricElement.classList.remove('animate-pulse');
+                lyricElement.textContent = "Failed to load song. :(";
+                setTimeout(showNextButton, 2000); // Fail gracefully and let user proceed
             }
         }
 
@@ -611,9 +679,6 @@
                 setTimeout(() => {
                     lyricElement.style.opacity = "0";
                     setTimeout(() => {
-                        lyricElement.classList.remove('text-4xl', 'font-extrabold', 'text-chapter-word');
-                        lyricElement.classList.add('text-white', 'text-xl', 'sm:text-3xl', 'italic');
-                        lyricElement.style.opacity = "1";
                         startSong();
                     }, 400);
                 }, 2500);
