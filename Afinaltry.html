@@ -65,6 +65,30 @@
             background-color: black;
         }
 
+        /* --- LOADING SCREEN STYLES --- */
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease;
+        }
+        .loading-heart {
+            font-size: 4rem;
+            animation: pulseHeart 1s infinite;
+        }
+        .loading-text {
+            margin-top: 1rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            color: #f783ac;
+        }
+
         /* --- SCREEN 1 STYLES --- */
         #screen1 {
             background: linear-gradient(135deg, #ffc0cb, #fbc2eb, #a6c0fe, #f7797d);
@@ -287,6 +311,14 @@
 <body>
 
     <!-- ========================================== -->
+    <!-- LOADING SCREEN                             -->
+    <!-- ========================================== -->
+    <div id="loadingScreen">
+        <div class="loading-heart">❤️</div>
+        <div class="loading-text" id="loadingText">Gathering something special... 0%</div>
+    </div>
+
+    <!-- ========================================== -->
     <!-- SCREEN 1: INTRO & FLOATING HEARTS          -->
     <!-- ========================================== -->
     <div id="screen1">
@@ -386,25 +418,10 @@
             s1HeartsContainer.appendChild(heart);
         }
 
-        musicBtn.addEventListener('click', async () => {
+        musicBtn.addEventListener('click', () => {
             if(!s1Started) {
                 s1Started = true;
                 
-                // Show a loading indicator while fetching the audio to avoid buffering
-                const originalText = musicBtn.textContent;
-                musicBtn.textContent = '⏳';
-                musicBtn.style.pointerEvents = 'none';
-
-                try {
-                    // Fetch entire audio as blob to ensure smooth playback
-                    const res = await fetch(s1Music.getAttribute('src'));
-                    const blob = await res.blob();
-                    s1Music.src = URL.createObjectURL(blob);
-                } catch(e) {
-                    console.log("Preloading failed, falling back to standard streaming", e);
-                }
-
-                musicBtn.style.pointerEvents = 'auto';
                 musicBtn.classList.add('moved');
                 musicBtn.textContent = '⏸';
                 s1Music.volume = 0.4;
@@ -459,7 +476,7 @@
             "And then I knew.....",
             "When I saw your eyes for the first time I was like.....",
             "Aar Taarpor......",
-            "Aar jokhoni sob thik hoye aamar jonno.....",
+            "Aar jokhoni sob thik hoye!!.....",
             "But ekta jinis jaano!!..."
         ];
 
@@ -611,57 +628,20 @@
             fadeInLyric(surprisePlaylist[currentSongIndex].lyrics[0].text);
         }
 
-        // Silent background preload function for the next song
-        function preloadNextSong() {
-            const nextIndex = currentSongIndex + 1;
-            if (nextIndex < surprisePlaylist.length) {
-                const nextSong = surprisePlaylist[nextIndex];
-                if (!nextSong.objectUrl) {
-                    fetch(nextSong.audioSrc)
-                        .then(res => res.blob())
-                        .then(blob => {
-                            nextSong.objectUrl = URL.createObjectURL(blob);
-                        })
-                        .catch(err => console.error("Prefetch failed", err));
-                }
-            }
-        }
-
         async function playMusicAndStartLyrics() {
             const song = surprisePlaylist[currentSongIndex];
             
-            // Show Loading State before starting
-            lyricElement.classList.remove('text-4xl', 'font-extrabold', 'text-chapter-word');
-            lyricElement.classList.add('text-white', 'text-xl', 'sm:text-3xl', 'italic');
-            lyricElement.textContent = "Downloading song... ⏳";
-            lyricElement.style.opacity = "1";
-            lyricElement.classList.add('animate-pulse');
-
             try {
-                // Fetch Audio File fully into Blob to ensure no buffering pauses
-                if (!song.objectUrl) {
-                    const response = await fetch(song.audioSrc);
-                    if (!response.ok) throw new Error("Network response was not ok");
-                    const blob = await response.blob();
-                    song.objectUrl = URL.createObjectURL(blob);
-                }
-
+                // Audio is already preloaded via objectUrl at the very beginning
                 s2Audio.src = song.objectUrl;
                 
-                // Clear the loading animation
-                lyricElement.classList.remove('animate-pulse');
-
                 await s2Audio.play();
                 isPlaying = true;
                 startLyricSync();
 
-                // Silently preload the next song so it's instantly ready
-                preloadNextSong();
-
             } catch (e) {
-                console.warn("Playback or fetch failed:", e);
-                lyricElement.classList.remove('animate-pulse');
-                lyricElement.textContent = "Failed to load song. :(";
+                console.warn("Playback failed:", e);
+                lyricElement.textContent = "Failed to play song. :(";
                 setTimeout(showNextButton, 2000); // Fail gracefully and let user proceed
             }
         }
@@ -804,6 +784,55 @@
             typeCharIndex = 0;
             typeNextChar();
         }
+
+        /* -------------------------------------------------------------------------- */
+        /* PRELOADER LOGIC (Downloads all music at the start)                         */
+        /* -------------------------------------------------------------------------- */
+        async function preloadAllAudio() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingText = document.getElementById('loadingText');
+            
+            const bgMusicEl = document.getElementById('background-music');
+            const bgSrc = bgMusicEl.getAttribute('src');
+            const allSrcs = [bgSrc, ...surprisePlaylist.map(s => s.audioSrc)];
+            let loadedCount = 0;
+
+            const fetchAudio = async (src) => {
+                try {
+                    const res = await fetch(src);
+                    const blob = await res.blob();
+                    loadedCount++;
+                    loadingText.textContent = `Gathering something special... ${Math.round((loadedCount / allSrcs.length) * 100)}%`;
+                    return URL.createObjectURL(blob);
+                } catch (e) {
+                    console.error("Failed to load:", src, e);
+                    loadedCount++;
+                    loadingText.textContent = `Gathering something special... ${Math.round((loadedCount / allSrcs.length) * 100)}%`;
+                    return src; // Fallback to streaming if download fails
+                }
+            };
+
+            // Download everything in parallel
+            const [bgObjectUrl, ...playlistUrls] = await Promise.all([
+                fetchAudio(bgSrc),
+                ...surprisePlaylist.map(song => fetchAudio(song.audioSrc))
+            ]);
+
+            // Assign object URLs back
+            bgMusicEl.src = bgObjectUrl;
+            surprisePlaylist.forEach((song, i) => {
+                song.objectUrl = playlistUrls[i];
+            });
+
+            // Fade out and remove loading screen
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 800);
+        }
+
+        // Start preloading immediately upon script execution
+        preloadAllAudio();
 
     </script>
 </body>
