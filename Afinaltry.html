@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Love for her</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Patrick+Hand&family=Dancing+Script:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'rose-blush': '#fde2e4',
+                        'deep-rose': '#833842',
+                        'lavender-mist': '#e0b1cb',
+                        'romantic-pink': '#f783ac',
+                        'chapter-word': '#d23d6a',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'cursive': ['Great Vibes', 'cursive'],
+                        'hand': ['Patrick Hand', 'cursive'],
+                        'dancing': ['Dancing Script', 'cursive']
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        pulseHeart: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.1)' },
+                        },
+                        floatHeart: {
+                            '0%': { transform: 'translateY(0) rotate(-45deg) scale(0.6)' },
+                            '100%': { transform: 'translateY(-110vh) rotate(-45deg) scale(1)' },
+                        },
+                        popHeart: {
+                            '0%': { opacity: '0', transform: 'scale(0) rotate(-45deg)' },
+                            '50%': { opacity: '1', transform: 'scale(1.2) rotate(-45deg)' },
+                            '100%': { opacity: '0.8', transform: 'scale(1) rotate(-45deg)' },
+                        }
+                    },
+                    animation: {
+                        fadeInUp: 'fadeInUp 1s ease-out forwards',
+                        pulseHeart: 'pulseHeart 1.5s ease-in-out infinite',
+                        floatHeart: 'floatHeart linear infinite',
+                        popHeart: 'popHeart 0.5s ease-out forwards',
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+
+        /* --- SCREEN 1 STYLES --- */
+        #screen1 {
+            background: linear-gradient(135deg, #ffc0cb, #fbc2eb, #a6c0fe, #f7797d);
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .s1-text {
+            font-family: 'Dancing Script', cursive;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            padding: 1rem;
+            border-radius: 1.5rem;
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateY(30px);
+            text-align: center;
+            width: 90%;
+            pointer-events: none;
+        }
+
+        .text-large { font-size: 2.5rem; }
+        .text-small { font-size: 1.75rem; }
+        @media(min-width:640px) { .text-large { font-size: 4rem; } .text-small { font-size: 2.5rem; } }
+        @media(min-width:1024px) { .text-large { font-size: 6rem; } .text-small { font-size: 4rem; } }
+
+        /* Custom Keyframes for Screen 1 Sequence */
+        @keyframes fadeTextSeq {
+            0% { opacity: 0; transform: translate(-50%, -50%) translateY(30px); }
+            15% { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+            85% { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+            100% { opacity: 0; transform: translate(-50%, -50%) translateY(-30px); }
+        }
+        @keyframes fadeInStay {
+            0% { opacity: 0; transform: translate(-50%, -50%) translateY(30px); }
+            100% { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+        }
+        @keyframes popInStay {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            40% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .cute-button {
+            z-index: 50;
+            text-decoration: none;
+            color: #d83b74;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Dancing Script', cursive;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+            pointer-events: none; /* Enabled after animation */
+        }
+        .cute-button:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 15px 20px rgba(255,105,180,0.4);
+            cursor: pointer;
+        }
+
+        #music-button {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            background: rgba(255,255,255,0.8);
+            border: 2px solid white;
+            color: #d83b74;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+            font-size: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 1s ease-in-out;
+            font-family: 'Inter', sans-serif;
+        }
+        #music-button.moved {
+            top: auto;
+            left: auto;
+            bottom: 20px;
+            right: 20px;
+            transform: none;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+        }
+
+        #floating-hearts-s1 { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: 1; }
+        .bg-heart {
+            position: absolute;
+            background: white;
+            transform: rotate(45deg);
+        }
+        .bg-heart:before, .bg-heart:after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 50%;
+        }
+        .bg-heart:before { top: -50%; left: 0; }
+        .bg-heart:after { left: -50%; top: 0; }
+
+        @keyframes randomFloat {
+            0% { transform: rotate(45deg) translate(0,0) scale(1); }
+            50% { transform: rotate(45deg) translate(var(--x-move),var(--y-move)) scale(1.1); }
+            100% { transform: rotate(45deg) translate(0,0) scale(1); }
+        }
+
+        /* --- SCREEN 2 STYLES (Mixtape) --- */
+        #screen2 {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            display: none; /* Hidden initially */
+        }
+        .mixtape-heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            transform: rotate(-45deg);
+            opacity: 0.6;
+            pointer-events: none;
+            animation: floatHeart 10s linear infinite, popHeart 0.5s ease-out forwards;
+            z-index: 0;
+        }
+        .mixtape-heart::before, .mixtape-heart::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: inherit;
+            border-radius: 50%;
+        }
+        .mixtape-heart::before { top: -50%; left: 0; }
+        .mixtape-heart::after { top: 0; left: 50%; }
+
+        #surpriseCard { z-index: 10; }
+        .expand-lyrics { animation: expandCard 1s ease-in-out forwards; }
+        .shrink-lyrics { animation: shrinkCard 1s ease-in-out forwards; }
+        @keyframes expandCard {
+            0% { width: 80%; min-height: 8rem; border-radius: 1rem; }
+            100% { width: 95%; min-height: 16rem; border-radius: 1.5rem; }
+        }
+        @keyframes shrinkCard {
+            0% { transform: scale(1); border-radius: 1.5rem; }
+            100% { transform: scale(0.9); border-radius: 1rem; }
+        }
+        .smooth-card { transition: all 0.8s ease-in-out; }
+
+        /* --- SCREEN 3 STYLES (Message) --- */
+        #screen3 {
+            position: absolute;
+            inset: 0;
+            z-index: 30;
+            display: none; /* Hidden initially */
+            flex-direction: column;
+            background-color: black;
+            color: white;
+            font-family: 'Patrick Hand', cursive;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 20px 80px 20px;
+            text-align: left;
+            overflow-y: auto;
+        }
+        .post-content {
+            width: 100%;
+            max-width: 500px;
+            font-size: 1.3rem;
+            line-height: 1.6;
+        }
+        .typing-line {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        .typing-text {
+            display: inline-block;
+            border-right: 2px solid white;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: blinkCursor 0.7s step-end infinite;
+        }
+        @keyframes blinkCursor {
+            0%, 100% { border-color: white; }
+            50% { border-color: transparent; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 1: INTRO & FLOATING HEARTS          -->
+    <!-- ========================================== -->
+    <div id="screen1">
+        <div id="floating-hearts-s1"></div>
+        <audio id="background-music" loop src="pehla-pyaar-pendujattcomse_HSEqvWXr.mp3"></audio>
+        
+        <h1 id="s1-t1" class="s1-text text-large">Heyy Shoi</h1>
+        <h1 id="s1-t2" class="s1-text text-small">It's 20th March <br> and</h1>
+        <h1 id="s1-t3" class="s1-text text-small">It's been 2 months of knowing you but it feels like I know you for ages</h1>
+        <!-- Text sequence 4 -->
+        <h1 id="s1-t4" class="s1-text text-small" style="top: 40%;">Here's something special only for you...</h1>
+        
+        <!-- Button appears AFTER text sequence 4 -->
+        <a id="redirect-button" class="cute-button" title="Click for a surprise!">Click for a Surprise! ❤️</a>
+        
+        <button id="music-button" title="Play Music">♪</button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 2: THE MIXTAPE CARD                 -->
+    <!-- ========================================== -->
+    <div id="screen2" class="font-inter bg-gradient-to-br from-rose-blush via-lavender-mist to-purple-200 flex items-center justify-center p-4">
+        <div id="s2-hearts-container"></div>
+        <audio id="romanticMusic"></audio>
+
+        <div id="surpriseCard" class="relative smooth-card bg-white/95 p-6 sm:p-10 shadow-2xl rounded-2xl max-w-xl w-full text-center transition-all duration-1000 ease-in-out transform scale-100 border-4 border-rose-blush min-h-[400px]">
+
+            <!-- Opener -->
+            <div id="openerView" class="space-y-6">
+                <svg class="mx-auto h-16 w-16 text-deep-rose animate-pulseHeart" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                </svg>
+                <h1 class="text-3xl sm:text-4xl font-bold text-deep-rose font-cursive">A Little Piece of love</h1>
+                <p class="text-lg text-gray-600 font-hand">Sometimes I want to say something which words can't describe so here's this..
+                    <br>Please puro ta dekho, I hope you like it ❤️
+                </p>
+                <button onclick="handleSurpriseClick()" class="py-3 px-8 text-white font-semibold rounded-full bg-deep-rose hover:bg-rose-700 transition duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-deep-rose focus:ring-opacity-50">
+                    Open the Card!
+                </button>
+            </div>
+
+            <!-- Message View / Lyrics -->
+            <div id="messageView" class="hidden text-center space-y-12 pt-8 animate-fadeInUp">
+                <div id="lyricsDisplay" class="flex items-center justify-center mb-10 px-4 py-4 bg-romantic-pink text-white rounded-xl shadow-2xl border-2 border-rose-blush transform mx-auto relative overflow-hidden transition-all duration-700 ease-in-out" style="width: 80%; min-height: 8rem;">
+                    <p class="text-xl sm:text-3xl font-bold italic" id="currentLyric"></p>
+                </div>
+
+                <div id="nextButtonContainer" class="flex justify-center mt-8 hidden">
+                    <button onclick="nextSong()" id="nextChapterButton" class="py-3 px-8 text-white font-semibold rounded-full bg-chapter-word hover:bg-deep-rose transition duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-chapter-word focus:ring-opacity-50">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 3: FINAL TYPEWRITER MESSAGE         -->
+    <!-- ========================================== -->
+    <div id="screen3">
+        <div class="post-content" id="post-content"></div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- MASTER JAVASCRIPT LOGIC                    -->
+    <!-- ========================================== -->
+    <script>
+        /* -------------------------------------------------------------------------- */
+        /* SCREEN 1 LOGIC (Intro Animations & Transition)                             */
+        /* -------------------------------------------------------------------------- */
+        const s1Music = document.getElementById('background-music');
+        const musicBtn = document.getElementById('music-button');
+        const redirectBtn = document.getElementById('redirect-button');
+        let s1Started = false;
+
+        // Generate Background Hearts for Screen 1
+        const s1HeartsContainer = document.getElementById('floating-hearts-s1');
+        for(let i=0; i<40; i++){
+            const heart = document.createElement('div');
+            heart.className = 'bg-heart';
+            const size = Math.random() * 20 + 15;
+            const xMove = (Math.random() * 100 - 50) + "px";
+            const yMove = (Math.random() * 30 + 10) * -1 + "px";
+            const duration = (Math.random() * 5 + 4) + "s";
+            const delay = (Math.random() * -5) + "s";
+            
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.top = Math.random() * 100 + "vh";
+            heart.style.width = size + "px";
+            heart.style.height = size + "px";
+            heart.style.opacity = Math.random() * 0.3 + 0.2;
+            heart.style.setProperty('--x-move', xMove);
+            heart.style.setProperty('--y-move', yMove);
+            heart.style.animation = `randomFloat ${duration} ease-in-out infinite alternate ${delay}`;
+            
+            s1HeartsContainer.appendChild(heart);
+        }
+
+        musicBtn.addEventListener('click', () => {
+            if(!s1Started) {
+                s1Started = true;
+                musicBtn.classList.add('moved');
+                musicBtn.textContent = '⏸';
+                s1Music.volume = 0.4;
+                s1Music.play().catch(e => console.error("Playback failed:", e));
+
+                // Start Text Sequence Timings
+                document.getElementById('s1-t1').style.animation = "fadeTextSeq 4s forwards 0.5s";
+                document.getElementById('s1-t2').style.animation = "fadeTextSeq 4s forwards 4.5s";
+                document.getElementById('s1-t3').style.animation = "fadeTextSeq 4s forwards 8.5s";
+                // Sequence 4 shows up and stays
+                document.getElementById('s1-t4').style.animation = "fadeInStay 2s forwards 12.5s";
+                
+                // Button pops in AFTER Sequence 4
+                redirectBtn.style.animation = "popInStay 1s forwards 14.5s";
+                redirectBtn.style.pointerEvents = "auto"; 
+            } else {
+                if(s1Music.paused){
+                    s1Music.play();
+                    musicBtn.textContent = '⏸';
+                } else {
+                    s1Music.pause();
+                    musicBtn.textContent = '♪';
+                }
+            }
+        });
+
+        // Screen 1 -> Screen 2 Transition
+        redirectBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            s1Music.pause(); // Stop screen 1 music
+            document.getElementById('screen1').style.display = 'none';
+            document.getElementById('screen2').style.display = 'flex';
+            animateS2HeartBackground(); // Start floating hearts for mixtape
+        });
+
+
+        /* -------------------------------------------------------------------------- */
+        /* SCREEN 2 LOGIC (Lyrics Mixtape)                                            */
+        /* -------------------------------------------------------------------------- */
+        const s2Audio = document.getElementById('romanticMusic');
+        const openerView = document.getElementById('openerView');
+        const messageView = document.getElementById('messageView');
+        const card = document.getElementById('surpriseCard');
+        const lyricElement = document.getElementById('currentLyric');
+        const nextButtonContainer = document.getElementById('nextButtonContainer');
+        const nextChapterButton = document.getElementById('nextChapterButton');
+        const lyricsDisplay = document.getElementById('lyricsDisplay');
+        const s2HeartsContainer = document.getElementById('s2-hearts-container');
+
+        const transitionMessages = [
+            "At first it was like.....",
+            "And then I knew.....",
+            "When I saw your eyes for the first time I was like.....",
+            "Aar Taarpor......",
+            "Aar jokhoni sob thik hoye aamar jonno.....",
+            "But ekta jinis jaano!!..."
+        ];
+
+        const surprisePlaylist = [
+            {
+                audioSrc: "song1.mp3",
+                lyrics: [
+                    { time: 0.0, text: "Ek ladki ko dekha to aisa laga" },
+                    { time: 8.2, text: "Jaise khilta gulaab, jaise shayar ka khwaab" },
+                    { time: 13.98, text: "Jaise ujali kiran, jaise ban mein hiran" },
+                    { time: 19.70, text: "Jaise chandni raat, jaise narmi ki baat" },
+                    { time: 25.79, text: "Jaise mandir mein ho ek jalta diya" },
+                    { time: 36.10, text: "Ho, ek ladki ko dekha to aisa laga" },
+                ]
+            },
+            {
+                audioSrc: "song2.mp3",
+                lyrics: [
+                    { time: 0.5, text: "And there was something about you" },
+                    { time: 3.2, text: "that now I can't remember" },
+                    { time: 5.65, text: "It's the same damn thing" },
+                    { time: 7.8, text: "that made my heart surrender" },
+                    { time: 10.56, text: "And I'll miss you on a train" },
+                    { time: 12.87, text: "I'll miss you in the mornin'" },
+                    { time: 15.69, text: "I never know what to think about" },
+                    { time: 19.4, text: "I think about you (Don't let go)" },
+                    { time: 24.6, text: "About you (Don't let go)" },
+                ]
+            },
+            {
+                audioSrc: "song3.mp3",
+                lyrics: [
+                    { time: 1.0, text: "Unse Nazar Kya Milin" },
+                    { time: 5.5, text: "Roshan Fizaein Ho Gayee" },
+                    { time: 11.2, text: "Aaj Jana Pyaar Ki Jaadugari" },
+                    { time: 15.8, text: "Jaadugari Kya Cheez Hai.." },
+                ]
+            },
+            {
+                audioSrc: "song4.mp3",
+                lyrics: [
+                    { time: 0.0, text: "Ho..Sheesh-Mehal Na Mujhko Suhaaye" },
+                    { time: 6.29, text: "Tujh Sang Sookhi Roti Bhaaye" },
+                    { time: 11.55, text: "Man Mast Magan" },
+                    { time: 12.90, text: "Man Mast Magan" },
+                    { time: 14.4, text: "Bas Tera Naam Dohraaye" },
+                    { time: 17.20, text: "Man Mast Magan" },
+                    { time: 18.5, text: "Man Mast Magan" },
+                    { time: 20.1, text: "Bas Tera Naam Dohraaye" },
+                ]
+            },
+            {
+                audioSrc: "song5.mp3",
+                lyrics: [
+                    { time: 0.1, text: "O cheyechi jotobari," },
+                    { time: 5.3, text: "Hoyeche charachari" },
+                    { time: 9.25, text: "Morechi totobari" },
+                    { time: 12.7, text: "Eseche ek bedona din" },
+                    { time: 17.4, text: "Kothin.." },
+                    { time: 20.0, text: "Tomake chara ekdin" },
+                ]
+            },
+            {
+                audioSrc: "song6.mp3",
+                lyrics: [
+                    { time: 0.95, text: "Tum ho toh sab achha hai" },
+                    { time: 4.7, text: "Tum ho to waqt thama hai" },
+                    { time: 9.1, text: "Tum ho to ye lamha hai" },
+                    { time: 13.5, text: "Tum ho to iss mein sada hai" },
+                ]
+            }
+        ];
+
+        let currentSongIndex = 0;
+        let currentLyricIndex = 0;
+        let isPlaying = false;
+        let isTransitioningText = false;
+
+        function getRandomArbitrary(min, max) { return Math.random() * (max - min) + min; }
+
+        function createS2RandomHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('mixtape-heart');
+            const colors = ['bg-rose-blush', 'bg-romantic-pink', 'bg-lavender-mist'];
+            heart.classList.add(colors[Math.floor(Math.random() * colors.length)]);
+            heart.style.left = `${getRandomArbitrary(-10, 110)}vw`;
+            heart.style.top = `${getRandomArbitrary(0, 100)}vh`;
+            const size = getRandomArbitrary(15, 35);
+            heart.style.width = `${size}px`;
+            heart.style.height = `${size}px`;
+            const duration = getRandomArbitrary(8, 18);
+            heart.style.animationDuration = `${duration}s`;
+            heart.style.animationDelay = `${getRandomArbitrary(0, 5)}s`;
+            s2HeartsContainer.appendChild(heart);
+            setTimeout(() => heart.remove(), duration * 1000 + 5000);
+        }
+
+        function animateS2HeartBackground(count = 40) {
+            for (let i = 0; i < count; i++) setTimeout(createS2RandomHeart, i * 50);
+            setInterval(createS2RandomHeart, 500);
+        }
+
+        function resetSong() {
+            s2Audio.pause();
+            s2Audio.currentTime = 0;
+            currentLyricIndex = 0;
+            isPlaying = false;
+            nextButtonContainer.classList.add('hidden');
+        }
+
+        function fadeInLyric(newText) {
+            if (isTransitioningText) return;
+            isTransitioningText = true;
+            lyricElement.style.transition = "opacity 0.4s ease";
+            lyricElement.style.opacity = "0";
+
+            setTimeout(() => {
+                lyricElement.textContent = newText;
+                lyricElement.style.opacity = "1";
+                lyricElement.style.transform = "translateY(5px)";
+                setTimeout(() => { lyricElement.style.transform = "translateY(0)"; }, 50);
+                setTimeout(() => { isTransitioningText = false; }, 400);
+            }, 400);
+        }
+
+        function updateLyrics(currentTime) {
+            const song = surprisePlaylist[currentSongIndex];
+            const lyrics = song.lyrics;
+            if (currentLyricIndex < lyrics.length - 1 && currentTime >= lyrics[currentLyricIndex + 1].time) {
+                currentLyricIndex++;
+                fadeInLyric(lyrics[currentLyricIndex].text);
+            }
+        }
+
+        function startLyricSync() {
+            s2Audio.addEventListener('timeupdate', () => {
+                if (isPlaying) updateLyrics(s2Audio.currentTime);
+            });
+            s2Audio.addEventListener('ended', showNextButton);
+            fadeInLyric(surprisePlaylist[currentSongIndex].lyrics[0].text);
+        }
+
+        async function playMusicAndStartLyrics() {
+            const song = surprisePlaylist[currentSongIndex];
+            s2Audio.src = song.audioSrc;
+            try {
+                await s2Audio.play();
+                isPlaying = true;
+                startLyricSync();
+            } catch (e) {
+                console.warn("Playback failed:", e);
+            }
+        }
+
+        function showTransitionMessageAndPlay() {
+            lyricElement.style.transition = "opacity 0.4s ease";
+            lyricElement.style.opacity = "0";
+
+            setTimeout(() => {
+                lyricElement.classList.remove('text-white', 'text-xl', 'sm:text-3xl', 'italic');
+                lyricElement.classList.add('text-4xl', 'font-extrabold', 'text-chapter-word');
+                lyricElement.textContent = transitionMessages[currentSongIndex];
+                lyricElement.style.opacity = "1";
+
+                setTimeout(() => {
+                    lyricElement.style.opacity = "0";
+                    setTimeout(() => {
+                        lyricElement.classList.remove('text-4xl', 'font-extrabold', 'text-chapter-word');
+                        lyricElement.classList.add('text-white', 'text-xl', 'sm:text-3xl', 'italic');
+                        lyricElement.style.opacity = "1";
+                        startSong();
+                    }, 400);
+                }, 2500);
+            }, 400);
+        }
+
+        function startSong() {
+            resetSong();
+            card.classList.remove('p-6', 'sm:p-10');
+            card.classList.add('p-0');
+            lyricsDisplay.classList.remove('shrink-lyrics');
+            lyricsDisplay.classList.add('expand-lyrics');
+            playMusicAndStartLyrics();
+        }
+
+        function showNextButton() {
+            lyricsDisplay.classList.remove('expand-lyrics');
+            lyricsDisplay.classList.add('shrink-lyrics');
+
+            setTimeout(() => {
+                card.classList.remove('p-0');
+                card.classList.add('p-6', 'sm:p-10');
+                nextButtonContainer.classList.remove('hidden');
+                
+                const isLast = currentSongIndex === surprisePlaylist.length - 1;
+                if (isLast) {
+                    nextChapterButton.textContent = "And here's a little message for you";
+                    nextChapterButton.onclick = () => {
+                        // Screen 2 -> Screen 3 Transition
+                        document.getElementById('screen2').style.display = 'none';
+                        document.getElementById('screen3').style.display = 'flex';
+                        startTypewriter();
+                    };
+                } else {
+                    nextChapterButton.textContent = "Next";
+                    nextChapterButton.onclick = nextSong;
+                }
+            }, 900);
+        }
+
+        function nextSong() {
+            nextButtonContainer.classList.add('hidden');
+            currentSongIndex++;
+            if (currentSongIndex < surprisePlaylist.length) showTransitionMessageAndPlay();
+        }
+
+        function handleSurpriseClick() {
+            openerView.classList.add('hidden');
+            messageView.classList.remove('hidden');
+            showTransitionMessageAndPlay();
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* SCREEN 3 LOGIC (Typewriter Message)                                        */
+        /* -------------------------------------------------------------------------- */
+        const typeLines = [
+            "Hey, I just wanted to say something important. I know life can be really tough sometimes,So,",
+            "I want to be your home. Find me when",
+            "your friends let you down. Find me when the world",
+            "feels too heavy to carry alone. Find me when your heart",
+            "feels like it's breaking. When you're tired of being strong.",
+            "When silence gets loud and no one seems to hear you.",
+            "Find me. I'll always be here no matter what. I won't",
+            "promise to fix everything. But I promise you won't face it",
+            "alone. I'll sit with you in the dark, I'll remind you of",
+            "your light. And I'll try my best to bring back your",
+            "smile, piece by piece. You're never a burden to me.",
+            "Okay?",
+            "This time no mistakes, no misunderstandings. Just me, you and everything good.",
+            "Can we meet tomorrow or whenever you say? I want to see you,",
+            " I want to tell you how much I care about you. I want to be there for you, always.",
+            "I love you...I hate shiny things but I would marry you with paper rings",
+            "aha!!",
+            " Darling you are the one I want"
+        ];
+
+        const typeContainer = document.getElementById('post-content');
+        let typeLineIndex = 0;
+        let typeCharIndex = 0;
+        let activeLineEl, activeTextEl;
+
+        function typeNextChar() {
+            if (typeLineIndex >= typeLines.length) return;
+
+            if (!activeLineEl) {
+                activeLineEl = document.createElement('span');
+                activeLineEl.className = 'typing-line';
+                activeTextEl = document.createElement('span');
+                activeTextEl.className = 'typing-text';
+                activeLineEl.appendChild(activeTextEl);
+                typeContainer.appendChild(activeLineEl);
+            }
+
+            const currentLine = typeLines[typeLineIndex];
+
+            if (typeCharIndex < currentLine.length) {
+                activeTextEl.textContent += currentLine.charAt(typeCharIndex);
+                typeCharIndex++;
+                
+                // Auto-scroll screen 3 to bottom
+                const screen3 = document.getElementById('screen3');
+                screen3.scrollTop = screen3.scrollHeight;
+                
+                setTimeout(typeNextChar, 50); // typing speed
+            } else {
+                activeTextEl.style.borderRight = 'none'; // remove cursor
+                typeLineIndex++;
+                typeCharIndex = 0;
+                activeLineEl = null;
+                activeTextEl = null;
+                
+                // Auto-scroll screen 3 to bottom on new line
+                const screen3 = document.getElementById('screen3');
+                screen3.scrollTop = screen3.scrollHeight;
+                
+                setTimeout(typeNextChar, 400); // pause before next line
+            }
+        }
+
+        function startTypewriter() {
+            typeContainer.innerHTML = ''; // Clear just in case
+            typeLineIndex = 0;
+            typeCharIndex = 0;
+            typeNextChar();
+        }
+
+    </script>
+</body>
+</html>
